@@ -87,10 +87,9 @@ class ProductRepository
     public function delete($id)
     {
         try {
-            $product = Product::destroy($id);
+            Product::destroy($id);
             return response()->json([
                 "message" => "Product has been deleted!",
-                "data" => $product
             ]);
         } catch (\Throwable $th) {
             throw $th;

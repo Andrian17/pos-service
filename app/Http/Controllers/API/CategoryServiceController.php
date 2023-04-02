@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use App\Http\Resources\CategoryCollection;
+use App\Models\Category;
+use App\Repositories\CategoryRepository;
+use Illuminate\Http\Request;
+
+class CategoryServiceController extends Controller
+{
+    protected $category;
+
+    public function __construct(CategoryRepository $category)
+    {
+        $this->category = $category;
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        return $this->category->index();
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        return $this->category->create($request->all());
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
+    {
+        return $this->category->show($id);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Category $category)
+    {
+        return $this->category->update($request->all(), $category->id);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Category $category)
+    {
+        return $this->category->delete($category->id);
+    }
+}
