@@ -16,14 +16,17 @@ class OrderFactory extends Factory
      */
     public function definition(): array
     {
+        $total_price = 22000;
+        $total_paid = 50000;
         return [
             "uuid" => uniqid(),
             "user_id" => fake()->numberBetween(1, 10),
             "payment_type_id" => 1,
             "name" => fake()->words(2, true),
-            "total_price" => fake()->numberBetween(10000, 10000000),
-            "total_paid" => fake()->numberBetween(10000, 1000000),
+            "total_price" => $total_price,
+            "total_paid" => $total_paid,
             "receipt_code" => "code",
+            "return" => $total_paid - $total_price
         ];
     }
 }

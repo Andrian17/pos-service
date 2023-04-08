@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('category_id');
             $table->string("SKU");
             $table->string("name");
-            $table->integer('stock');
-            $table->bigInteger('price');
+            $table->unsignedInteger('stock');
+            $table->unsignedBigInteger('price');
             $table->string('image')->nullable();
             $table->timestamps();
         });

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignUuid("order_uuid");
             $table->foreignId('product_id');
-            $table->integer('qty');
-            $table->bigInteger('total_price');
+            $table->unsignedInteger('qty');
+            $table->unsignedBigInteger('total_price');
             $table->timestamps();
         });
     }

@@ -16,8 +16,9 @@ return new class extends Migration
             $table->foreignId('user_id');
             $table->foreignId('payment_type_id');
             $table->string('name');
-            $table->bigInteger('total_price');
-            $table->bigInteger('total_paid');
+            $table->unsignedBigInteger('total_price');
+            $table->unsignedBigInteger('total_paid');
+            $table->unsignedBigInteger('return');
             $table->string('receipt_code');
             $table->timestamps();
         });

@@ -21,7 +21,7 @@ class ProductFactory extends Factory
             "SKU" => "sku-" . uniqid(),
             "name" => fake()->name(),
             "stock" => fake()->numberBetween(10, 20),
-            "price" => fake()->numberBetween(10000, 10000000),
+            "price" => fake()->numberBetween(10000, 100000),
             "image" => fake()->imageUrl()
         ];
     }

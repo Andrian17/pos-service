@@ -25,3 +25,4 @@ Route::resource('/products', ProductServiceController::class);
 Route::resource('/categories', CategoryServiceController::class);
 
 Route::post('/orders', [OrderController::class, 'store']);
+Route::get('/orders', [OrderController::class, 'index']);
