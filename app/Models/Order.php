@@ -9,6 +9,16 @@ class Order extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        "uuid",
+        "user_id",
+        "payment_type_id",
+        "name",
+        "total_paid",
+        "total_price",
+        "receipt_code"
+    ];
+
     public function user()
     {
         return $this->hasOne(User::class, 'id', "user_id");
@@ -16,7 +26,7 @@ class Order extends Model
 
     public function order_products()
     {
-        return $this->hasMany(OrderProduct::class, 'order_id', 'id');
+        return $this->hasMany(OrderProduct::class, 'order_uuid', 'uuid');
     }
 
     public function payment()

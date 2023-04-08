@@ -17,6 +17,7 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
+            "uuid" => uniqid(),
             "user_id" => fake()->numberBetween(1, 10),
             "payment_type_id" => 1,
             "name" => fake()->words(2, true),

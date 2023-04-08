@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\ProductServiceController;
 use App\Http\Controllers\API\CategoryServiceController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,3 +23,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::resource('/products', ProductServiceController::class);
 Route::resource('/categories', CategoryServiceController::class);
+
+Route::post('/orders', [OrderController::class, 'store']);

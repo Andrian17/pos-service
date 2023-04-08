@@ -21,13 +21,14 @@ class CategoryRepository
 
     public function show($id)
     {
-        try {
-            return response()->json(new CategoryResource(Category::with("products")->find($id)), 200);
-        } catch (\Throwable $th) {
-            return response()->json([
-                "message" => "Data Not found!"
-            ], 404);
-        }
+        $category = Category::with("products")->findOrFail($id);
+        return response()->json(
+            [
+                "message" => "success",
+                "data" => $category
+            ],
+            200
+        );
     }
 
     public function create($data)
@@ -64,7 +65,7 @@ class CategoryRepository
                     "data" => $validator->errors()
                 ], 400);
             }
-            $category = Category::find($id)->update($data);
+            $category = Category::with("products")->findOrFail($id)->update($data);
             return response()->json([
                 "message" => "Category has been updated",
                 "data" => $category
