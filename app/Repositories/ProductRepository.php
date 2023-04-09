@@ -13,7 +13,13 @@ class ProductRepository
         try {
             return new ProductCollection(Product::with("category")->paginate(10));
         } catch (\Throwable $th) {
-            throw $th;
+            return response()->json([
+                "message" => "Error",
+                "error" => [
+                    "message" => $th->getMessage(),
+                    "line" => $th->getLine()
+                ]
+            ]);
         }
     }
 
@@ -25,7 +31,13 @@ class ProductRepository
                 "data" => $product
             ]);
         } catch (\Throwable $th) {
-            throw $th;
+            return response()->json([
+                "message" => "Error",
+                "error" => [
+                    "message" => $th->getMessage(),
+                    "line" => $th->getLine()
+                ]
+            ]);
         }
     }
 
@@ -52,7 +64,13 @@ class ProductRepository
                 "data" => $product
             ], 201);
         } catch (\Throwable $th) {
-            throw $th;
+            return response()->json([
+                "message" => "Error",
+                "error" => [
+                    "message" => $th->getMessage(),
+                    "line" => $th->getLine()
+                ]
+            ]);
         }
     }
 
@@ -80,7 +98,13 @@ class ProductRepository
                 "data" => $product
             ], 200);
         } catch (\Throwable $th) {
-            throw $th;
+            return response()->json([
+                "message" => "Error",
+                "error" => [
+                    "message" => $th->getMessage(),
+                    "line" => $th->getLine()
+                ]
+            ]);
         }
     }
 
@@ -92,7 +116,13 @@ class ProductRepository
                 "message" => "Product has been deleted!",
             ]);
         } catch (\Throwable $th) {
-            throw $th;
+            return response()->json([
+                "message" => "Error",
+                "error" => [
+                    "message" => $th->getMessage(),
+                    "line" => $th->getLine()
+                ]
+            ]);
         }
     }
 }

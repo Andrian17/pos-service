@@ -50,9 +50,9 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Order $order)
+    public function show($uuid)
     {
-        //
+        return $this->orderRepository->show($uuid);
     }
 
     /**

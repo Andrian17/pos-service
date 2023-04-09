@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 class GenerateImageTest extends TestCase
 {
-    public function testGenerateImage()
-    {
-    }
+    // public function testGenerateImage()
+    // {
+    // }
 }

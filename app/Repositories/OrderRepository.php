@@ -10,6 +10,21 @@ use Illuminate\Support\Facades\DB;
 class OrderRepository
 {
 
+    public function index()
+    {
+        try {
+            $order = Order::with(['order_products', "payment"])->get();
+            return response()->json([
+                "message" => "List Order",
+                "data" => $order
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                "error" => $th->getMessage()
+            ], 500);
+        }
+    }
+
     public function store($request)
     {
         DB::beginTransaction();
@@ -28,7 +43,7 @@ class OrderRepository
         foreach ($requestProducts as $requestProduct) {
             $product = Product::find($requestProduct["product_id"]);
 
-            if (($product->stock - $requestProduct["qty"]) < 0) {
+            if ($requestProduct["qty"] > $product->stock) {
                 return response()->json(
                     [
                         "message" => "Stock unavailable",
@@ -62,17 +77,17 @@ class OrderRepository
         $order["return"] = $order["total_paid"] - $order["total_price"];
 
         try {
-            if ($total_price < $order["total_paid"]) {
+            if ($total_price <= $order["total_paid"]) {
                 $items = collect($order_products);
                 Order::create($order);
                 OrderProduct::insert($order_products);
                 DB::commit();
                 return response()->json([
                     "message" => "success",
+                    "order_uuid" => $order["uuid"],
                     "purchased_items" => $items->map(function ($item) {
                         $product = Product::find($item["product_id"]);
                         return [
-                            "order_uuid" => $item["order_uuid"],
                             "product_id" => $item["product_id"],
                             "name" => $product->name,
                             "price" => $product->price,
@@ -95,7 +110,16 @@ class OrderRepository
             ]);
         } catch (\Throwable $th) {
             DB::rollBack();
-            return response()->json(['error' => $th->getMessage()], 500);
+            return response()->json(['error' => [
+                "message" => $th->getMessage(),
+                "line" => $th->getLine(),
+                "code" => $th->getCode()
+            ]], 500);
         }
+    }
+
+    public function show($uuid)
+    {
+        return Order::with(["order_products", "payment"])->whereUuid($uuid)->first();
     }
 }
