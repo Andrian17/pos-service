@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\ProductServiceController;
 use App\Http\Controllers\API\CategoryServiceController;
 use App\Http\Controllers\API\OrderServiceController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -29,3 +30,14 @@ Route::resource('/categories', CategoryServiceController::class);
 // Route::get('/orders', [OrderController::class, 'index']);
 
 Route::resource('/orders', OrderServiceController::class);
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'auth'
+], function ($router) {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/refresh', [AuthController::class, 'refresh']);
+    Route::get('/user-profile', [AuthController::class, 'userProfile']);
+});
