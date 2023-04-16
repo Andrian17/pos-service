@@ -14,6 +14,10 @@ class CategoryServiceController extends Controller
     public function __construct(CategoryRepository $category)
     {
         $this->category = $category;
+        // header('Access-Control-Allow-Origin: *');
+        // header('Access-Control-Allow-Methods: *');
+        // header('Access-Control-Allow-Headers: *');
+        // header('Content-Type: application/json');
     }
 
     /**

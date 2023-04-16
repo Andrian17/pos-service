@@ -120,6 +120,15 @@ class OrderRepository
 
     public function show($uuid)
     {
-        return Order::with(["order_products", "payment"])->whereUuid($uuid)->first();
+        $order = Order::with(["order_products", "payment"])->whereUuid($uuid)->first();
+        return response()->json([
+            "message" => 'Show Order by Uiid',
+            "data" => $order
+        ], 200);
+    }
+
+    public function destroy($id)
+    {
+        return Order::destroy($id);
     }
 }

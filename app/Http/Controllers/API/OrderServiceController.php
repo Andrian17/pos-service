@@ -52,6 +52,6 @@ class OrderServiceController extends Controller
      */
     public function destroy(Order $order)
     {
-        //
+        return  $this->order->destroy($order->uuid);
     }
 }

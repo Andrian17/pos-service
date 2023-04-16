@@ -23,21 +23,21 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::resource('/products', ProductServiceController::class);
-Route::resource('/categories', CategoryServiceController::class);
-
-// Route::post('/orders', [OrderController::class, 'store']);
-// Route::get('/orders', [OrderController::class, 'index']);
-
-Route::resource('/orders', OrderServiceController::class);
-
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
 ], function ($router) {
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
 });
+
+Route::resource('/products', ProductServiceController::class)->middleware('admin')->only('index', 'show', 'store')->middleware('user');
+Route::resource('/categories', CategoryServiceController::class)->middleware('admin');
+Route::resource('/orders', OrderServiceController::class)->middleware('admin');
+
+Route::get('/get-login', function () {
+    return response()->json(['error' => 'Unauthorized'], 401);
+})->name('get-login');
