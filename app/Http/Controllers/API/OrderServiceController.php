@@ -34,15 +34,16 @@ class OrderServiceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Order $order)
+    public function show($order)
     {
-        return $this->show($order->uuid);
+        return $this->order->show($order);
+        // return response()->json(["data" => "OK"]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Order $order)
+    public function update(Request $request, $order)
     {
         //
     }
@@ -50,8 +51,8 @@ class OrderServiceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Order $order)
+    public function destroy($order)
     {
-        return  $this->order->destroy($order->uuid);
+        return  $this->order->destroy($order);
     }
 }

@@ -52,6 +52,7 @@ class OrderController extends Controller
      */
     public function show($uuid)
     {
+        // return response()->json(["data" => "OK"]);
         return $this->orderRepository->show($uuid);
     }
 

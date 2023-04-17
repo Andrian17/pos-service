@@ -34,9 +34,18 @@ Route::group([
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
 });
 
-Route::resource('/products', ProductServiceController::class)->middleware('admin')->only('index', 'show', 'store')->middleware('user');
-Route::resource('/categories', CategoryServiceController::class)->middleware('admin');
-Route::resource('/orders', OrderServiceController::class)->middleware('admin');
+
+
+Route::group(['middleware' => ['admin']], function () {
+    Route::resource('/products', ProductServiceController::class);
+    Route::resource('/categories', CategoryServiceController::class);
+    Route::resource('/orders', OrderServiceController::class);
+});
+Route::group(['middleware' => ['user']], function () {
+    Route::resource('/products', ProductServiceController::class)->only("show", "index");
+    Route::resource('/categories', CategoryServiceController::class)->only("show", "index");
+    Route::resource('/orders', OrderServiceController::class)->only("store");
+});
 
 Route::get('/get-login', function () {
     return response()->json(['error' => 'Unauthorized'], 401);
