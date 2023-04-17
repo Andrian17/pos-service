@@ -35,9 +35,9 @@ Route::group([
 });
 
 
-Route::resource('/products', ProductServiceController::class);
-Route::resource('/categories', CategoryServiceController::class);
-Route::resource('/orders', OrderServiceController::class);
+Route::resource('/products', ProductServiceController::class)->middleware('admin')->only('index', 'show', 'store')->middleware('user');
+Route::resource('/categories', CategoryServiceController::class)->middleware('admin');
+Route::resource('/orders', OrderServiceController::class)->middleware('admin');
 
 Route::get('/get-login', function () {
     return response()->json(['error' => 'Unauthorized'], 401);

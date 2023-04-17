@@ -19,18 +19,15 @@ class Admin
         if (!Auth::check()) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+        if (Auth::user()->role != 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
         if (Auth::user()->role !== 'admin') {
             return $next($request);
         }
 
-        if (Auth::user()->role === 'admin') {
-            // return $next($request);
-            return response("OK");
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
-
-        // if ($request->route('order.index') || $request->route('order.show')) {
-        //     return $next($request);
-        // }
-
     }
 }
