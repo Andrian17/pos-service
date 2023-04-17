@@ -14,6 +14,8 @@ class OrderServiceController extends Controller
     public function __construct(OrderRepository $orderRepository)
     {
         $this->order = $orderRepository;
+        // $this->middleware('admin');
+        // $this->middleware('user', ['only' => ['show', 'index']]);
     }
     /**
      * Display a listing of the resource.
