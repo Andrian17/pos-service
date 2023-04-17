@@ -19,12 +19,10 @@ class User
         if (!Auth::check()) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-
-        if (Auth::user()->role === 'user') {
-            return $next($request);
+        if (Auth::user()->role != 'user') {
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
-
-        if (Auth::user()->role === 'admin') {
+        if (Auth::user()->role === 'user') {
             return $next($request);
         }
     }
