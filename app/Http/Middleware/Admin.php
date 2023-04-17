@@ -17,17 +17,15 @@ class Admin
     public function handle(Request $request, Closure $next): Response
     {
         if (!Auth::check()) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-        if (Auth::user()->role != 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Unauthorized', "data" => [
+                "your token invalid",
+            ]], 401);
         }
         if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        if (Auth::user()->role === 'admin') {
             return $next($request);
-        }
-
-        if (Auth::user()->role !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 401);
         }
     }
 }
