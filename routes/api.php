@@ -44,7 +44,7 @@ Route::group(['middleware' => ['admin']], function () {
 Route::group(['middleware' => ['user']], function () {
     Route::resource('/products', ProductServiceController::class)->only("show", "index");
     Route::resource('/categories', CategoryServiceController::class)->only("show", "index");
-    Route::resource('/orders', OrderServiceController::class)->only("store");
+    Route::resource('/orders', OrderServiceController::class)->only("store", "index");
 });
 
 Route::get('/get-login', function () {
