@@ -36,15 +36,15 @@ Route::group([
 
 
 
-Route::group(['middleware' => ['admin']], function () {
-    Route::resource('/products', ProductServiceController::class);
+Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
+    Route::apiResource('/products', ProductServiceController::class);
     Route::resource('/categories', CategoryServiceController::class);
     Route::resource('/orders', OrderServiceController::class);
 });
 Route::group(['middleware' => ['user']], function () {
-    Route::resource('/products', ProductServiceController::class)->only("show", "index");
+    Route::resource('/products', ProductServiceController::class)->only("show", "index", "store");
     Route::resource('/categories', CategoryServiceController::class)->only("show", "index");
-    Route::resource('/orders', OrderServiceController::class)->only("store", "index");
+    Route::resource('/orders', OrderServiceController::class)->only("store", "index", 'show');
 });
 
 Route::get('/get-login', function () {

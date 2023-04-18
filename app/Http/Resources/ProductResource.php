@@ -14,6 +14,7 @@ class ProductResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $pathImage = '/storage/products/';
         $category = collect($this->category)->except(["created_at", "updated_at"]);
         return [
             "id" => $this->id,
@@ -21,7 +22,7 @@ class ProductResource extends JsonResource
             "name" => $this->name,
             "stock" => $this->stock,
             "price" => $this->price,
-            "image" => $this->image,
+            "image" => $request->getSchemeAndHttpHost() . $pathImage . $this->image,
             "category" => $category,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at

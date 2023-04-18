@@ -21,12 +21,11 @@ class Admin
                 "your token invalid",
             ]], 401);
         }
-        if (Auth::user()->role !== 'admin') {
-            return response()->json(['error' => 'Unauthorized', "message" => "Not Admin"], 401);
-        }
 
         if (Auth::user()->role === 'admin') {
             return $next($request);
         }
+
+        return response()->json(['error' => 'Unauthorized'], 401);
     }
 }

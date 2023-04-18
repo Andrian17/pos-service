@@ -2,8 +2,10 @@
 
 namespace App\Repositories;
 
+use App\Http\Requests\StoreProductRequest;
 use App\Http\Resources\ProductCollection;
 use App\Models\Product;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ProductRepository
@@ -11,7 +13,7 @@ class ProductRepository
     public function index()
     {
         try {
-            return new ProductCollection(Product::with("category")->paginate(10));
+            return new ProductCollection(Product::with("category")->paginate(20));
         } catch (\Throwable $th) {
             return response()->json([
                 "message" => "Error",
@@ -41,10 +43,18 @@ class ProductRepository
         }
     }
 
-    public function create($data)
+    public function create(StoreProductRequest $storeProductRequest)
     {
         try {
-            $validator = Validator::make($data, [
+            $product = [
+                "category_id" => $storeProductRequest->input("category_id"),
+                "SKU" => $storeProductRequest->input("SKU"),
+                "name" => $storeProductRequest->input("name"),
+                "stock" => $storeProductRequest->input("stock"),
+                "price" => $storeProductRequest->input("price"),
+            ];
+
+            $validator = Validator::make($storeProductRequest->all(), [
                 "category_id" => 'required',
                 "SKU" => 'required|unique:products',
                 "name" => 'required',
@@ -52,13 +62,19 @@ class ProductRepository
                 "price" => 'required|numeric',
             ]);
 
+            $product_image = $storeProductRequest->file('image');
+            $fileName = 'product-' . uniqid() . '.' . $product_image->clientExtension();
+            $product_image->storeAs('public/products', $fileName);
+            $product["image"] = $fileName;
+
             if ($validator->fails()) {
                 return response()->json([
                     "message" => "Request Invalid",
-                    "data" => $validator->errors()
+                    "errors" => $validator->errors()
                 ], 400);
             }
-            $product = Product::create($data);
+
+            $product = Product::create($product);
             return response()->json([
                 "message" => "Product has been created",
                 "data" => $product
