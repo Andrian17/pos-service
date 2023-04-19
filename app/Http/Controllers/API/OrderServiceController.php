@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreOrderRequest;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ class OrderServiceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreOrderRequest $request)
     {
         return $this->order->store($request);
     }

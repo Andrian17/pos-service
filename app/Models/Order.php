@@ -17,7 +17,7 @@ class Order extends Model
         "total_paid",
         "total_price",
         "receipt_code",
-        "return"
+        "total_return"
     ];
 
     public function user()

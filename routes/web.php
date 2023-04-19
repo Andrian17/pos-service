@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +16,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('/exp', function () {
+    $fake = fake()->image();
+    $saveFile = Storage::putFile('/public/products', $fake, 'public');
+    return explode("/", $saveFile)[2];
 });

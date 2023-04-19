@@ -26,7 +26,7 @@ class OrderFactory extends Factory
             "total_price" => $total_price,
             "total_paid" => $total_paid,
             "receipt_code" => "code",
-            "return" => $total_paid - $total_price
+            "total_return" => $total_paid - $total_price
         ];
     }
 }

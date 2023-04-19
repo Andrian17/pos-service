@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->unsignedBigInteger('total_price');
             $table->unsignedBigInteger('total_paid');
-            $table->unsignedBigInteger('return');
+            $table->unsignedBigInteger('total_return');
             $table->string('receipt_code');
             $table->timestamps();
         });

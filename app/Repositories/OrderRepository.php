@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Http\Requests\StoreOrderRequest;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Product;
@@ -13,29 +14,33 @@ class OrderRepository
     public function index()
     {
         try {
-            $order = Order::with(['order_products', "payment"])->get();
+            $order = Order::with(['order_products.product', "payment"])->get();
             return response()->json([
                 "message" => "List Order",
                 "data" => $order
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
+                "message" => "error",
                 "error" => $th->getMessage()
             ], 500);
         }
     }
 
-    public function store($request)
+    public function store(StoreOrderRequest $request)
     {
         DB::beginTransaction();
+        // 1 Data Order
         $order = [
             "uuid" => uniqid(),
-            "user_id" => 1,
-            "payment_type_id" => $request["payment_type_id"],
-            "name" => "Andrian",
-            "total_paid" => $request["total_paid"]
+            "user_id" => auth()->user()->id,
+            "payment_type_id" => $request->input("payment_type_id"),
+            "name" => auth()->user()->name,
+            "total_paid" => $request->input("total_paid"),
+            "total_price" => null,
+            "total_return" => null,
+            "receipt_code" => $request->input("receipt_code") ? $request->input("receipt_code") : "OK"
         ];
-        $total_price = null;
 
         $requestProducts = $request->input("products");
         $order_products = [];
@@ -46,7 +51,7 @@ class OrderRepository
             if ($requestProduct["qty"] > $product->stock) {
                 return response()->json(
                     [
-                        "message" => "Stock unavailable",
+                        "message" => "Not enough stock",
                         "data" => [
                             "stock" => $product->stock,
                             "request_stock" => $requestProduct["qty"],
@@ -59,6 +64,7 @@ class OrderRepository
             $product->stock -= $requestProduct["qty"];
             $product->update();
 
+            // 2. Data OrderProduct
             $order_product = [
                 "order_uuid" => $order["uuid"],
                 "product_id" => $requestProduct["product_id"],
@@ -68,19 +74,19 @@ class OrderRepository
                 "updated_at" => now()
             ];
 
-            $total_price += $order_product["total_price"];
+            $order["total_price"] += $order_product["total_price"];
             array_push($order_products, $order_product);
         }
 
-        $order["total_price"] = $total_price;
-        $order["receipt_code"] = "OK";
-        $order["return"] = $order["total_paid"] - $order["total_price"];
-
         try {
-            if ($total_price <= $order["total_paid"]) {
-                $items = collect($order_products);
+            if ($order["total_paid"] >= $order["total_price"]) {
+                $order["total_return"] = $order["total_paid"] - $order["total_price"];
+
                 Order::create($order);
                 OrderProduct::insert($order_products);
+
+                // 3 Response
+                $items = collect($order_products);
                 DB::commit();
                 return response()->json([
                     "message" => "success",
@@ -97,7 +103,7 @@ class OrderRepository
                     }),
                     "total_price" => $order["total_price"],
                     "total_paid" => $order["total_paid"],
-                    "return" => $order["return"]
+                    "return" => $order["total_return"]
                 ]);
             }
             return response()->json([
@@ -110,25 +116,31 @@ class OrderRepository
             ]);
         } catch (\Throwable $th) {
             DB::rollBack();
-            return response()->json(['error' => [
-                "message" => $th->getMessage(),
-                "line" => $th->getLine(),
-                "code" => $th->getCode()
-            ]], 500);
+            return response()->json(['message' => "error", 'error' => $th->getMessage()], 500);
         }
     }
 
     public function show($uuid)
     {
-        $order = Order::with(["order_products", "payment"])->whereUuid($uuid)->first();
+        $order = Order::with(["order_products.product", "payment"])->whereUuid($uuid)->first();
         return response()->json([
-            "message" => 'Show Order by Uiid',
+            "message" => 'Show Order by Uuid',
             "data" => $order
         ], 200);
     }
 
-    public function destroy($id)
+    public function destroy($uuid)
     {
-        return Order::destroy($id);
+        try {
+            Order::whereUuid($uuid)->first()->delete();
+            return response()->json([
+                "message" => "Order has been deleted!"
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                "message" => "error",
+                "error" => $th->getLine()
+            ]);
+        }
     }
 }

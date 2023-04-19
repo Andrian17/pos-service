@@ -15,7 +15,10 @@ class CategoryRepository
         try {
             return response()->json(new CategoryCollection(Category::with("products")->get()), 200);
         } catch (\Throwable $th) {
-            throw $th;
+            return response()->json([
+                "message" => "error",
+                "error" => $th->getMessage()
+            ]);
         }
     }
 
@@ -49,7 +52,10 @@ class CategoryRepository
                 "data" => $category
             ], 200);
         } catch (\Throwable $th) {
-            throw $th;
+            return response()->json([
+                "message" => "error",
+                "error" => $th->getMessage()
+            ]);
         }
     }
 
@@ -72,7 +78,8 @@ class CategoryRepository
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
-                "message" => "Data Not found!"
+                "message" => "error",
+                "error" => $th->getMessage()
             ], 404);
         }
     }
@@ -86,7 +93,8 @@ class CategoryRepository
             ]);
         } catch (\Throwable $th) {
             return response()->json([
-                "message" => "Data Not found!"
+                "message" => "error",
+                "error" => $th->getMessage()
             ], 404);
         }
     }

@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
+        Payment::factory(5)->create();
         Product::factory(20)->create();
         Category::factory(5)->create();
         Order::factory(3)->create()->each(function ($order) {
@@ -37,6 +38,5 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         });
-        Payment::factory(5)->create();
     }
 }
