@@ -18,8 +18,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+
 Route::get('/exp', function () {
     $fake = fake()->image();
     $saveFile = Storage::putFile('/public/products', $fake, 'public');
     return explode("/", $saveFile)[2];
 });
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
