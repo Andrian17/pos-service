@@ -30,3 +30,10 @@ Route::get('/exp', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/exp', function () {
+    return view('layouts.main');
+});
+Route::get('/transaction', function () {
+    return view('pages.transaction');
+});

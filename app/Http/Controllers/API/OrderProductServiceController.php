@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Models\OrderProduct;
-use App\Http\Requests\StoreOrderProductRequest;
-use App\Http\Requests\UpdateOrderProductRequest;
 use App\Repositories\OrderProductRepository;
+use Illuminate\Http\Request;
 
-class OrderProductController extends Controller
+class OrderProductServiceController extends Controller
 {
     protected $orderProduct;
     public function __construct(OrderProductRepository $orderProductRepository)
@@ -19,21 +19,13 @@ class OrderProductController extends Controller
      */
     public function index($rows = null)
     {
-        return $this->orderProduct->index();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return $this->orderProduct->index($rows);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreOrderProductRequest $request)
+    public function store(Request $request)
     {
         //
     }
@@ -43,21 +35,13 @@ class OrderProductController extends Controller
      */
     public function show(OrderProduct $orderProduct)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(OrderProduct $orderProduct)
-    {
-        //
+        return $this->orderProduct->show($orderProduct->id);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateOrderProductRequest $request, OrderProduct $orderProduct)
+    public function update(Request $request, OrderProduct $orderProduct)
     {
         //
     }

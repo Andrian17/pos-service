@@ -4,7 +4,9 @@ use App\Http\Controllers\API\ProductServiceController;
 use App\Http\Controllers\API\CategoryServiceController;
 use App\Http\Controllers\API\OrderServiceController;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\OrderProductServiceController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -42,11 +44,13 @@ Route::group(['middleware' => ['auth:api', 'admin'], 'prefix' => 'admin'], funct
     Route::apiResource('/products', ProductServiceController::class);
     Route::resource('/categories', CategoryServiceController::class);
     Route::resource('/orders', OrderServiceController::class);
+    Route::resource('/order-product', OrderProductServiceController::class)->only(['index', 'show']);
 });
 Route::group(['middleware' => ['auth:api', 'user']], function () {
     Route::resource('/products', ProductServiceController::class)->only("show", "index", "store");
     Route::resource('/categories', CategoryServiceController::class)->only("show", "index");
     Route::resource('/orders', OrderServiceController::class)->only("store", "index", 'show');
+    Route::apiResource('/order-product', OrderProductServiceController::class)->only(['index', 'show']);
 });
 
 Route::get('/get-login', function () {
