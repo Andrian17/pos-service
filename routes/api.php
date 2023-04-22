@@ -28,20 +28,22 @@ Route::group([
     'prefix' => 'auth'
 ], function ($router) {
     Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/refresh', [AuthController::class, 'refresh']);
-    Route::get('/user-profile', [AuthController::class, 'userProfile']);
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::post('/register', [AuthController::class, 'register']);
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::post('/refresh', [AuthController::class, 'refresh']);
+        Route::get('/user-profile', [AuthController::class, 'userProfile']);
+    });
 });
 
 
 
-Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
+Route::group(['middleware' => ['auth:api', 'admin'], 'prefix' => 'admin'], function () {
     Route::apiResource('/products', ProductServiceController::class);
     Route::resource('/categories', CategoryServiceController::class);
     Route::resource('/orders', OrderServiceController::class);
 });
-Route::group(['middleware' => ['user']], function () {
+Route::group(['middleware' => ['auth:api', 'user']], function () {
     Route::resource('/products', ProductServiceController::class)->only("show", "index", "store");
     Route::resource('/categories', CategoryServiceController::class)->only("show", "index");
     Route::resource('/orders', OrderServiceController::class)->only("store", "index", 'show');

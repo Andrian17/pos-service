@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -23,7 +24,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        if (!$token = auth()->attempt($validator->validated())) {
+        if (!$token = auth()->guard('api')->attempt($validator->validated())) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         return $this->createNewToken($token);
@@ -38,7 +39,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors()->toJson(), 400);
+            return response()->json($validator->errors(), 400);
         }
 
         $user = User::create(array_merge(
@@ -53,18 +54,19 @@ class AuthController extends Controller
 
     public function logout()
     {
-        auth()->logout();
+        auth()->guard('api')->logout();
         return response()->json(['message' => 'User successfully signed out']);
     }
 
     public function refresh()
     {
-        return $this->createNewToken(auth()->refresh());
+        return $this->createNewToken(auth()->guard('api')->refresh());
     }
 
     public function userProfile()
     {
-        return response()->json(auth()->user());
+        return response()->json(auth()->guard('api')->user());
+        // return response()->json(auth()->guard('web')->check());
     }
 
     public function createNewToken($token)
@@ -72,8 +74,8 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth()->user()
+            'expires_in' => auth()->guard('api')->factory()->getTTL() * 60,
+            'user' => auth()->guard('api')->user()
         ]);
     }
 }

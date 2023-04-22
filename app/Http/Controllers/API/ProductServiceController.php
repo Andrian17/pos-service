@@ -7,6 +7,7 @@ use App\Http\Requests\StoreProductRequest;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductServiceController extends Controller
 {
