@@ -53,7 +53,9 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        //
+        var_dump($request->all());
+        var_dump($product->name);
+        return "CCC";
     }
 
     /**

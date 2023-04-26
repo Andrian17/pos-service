@@ -7,6 +7,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\OrderProductServiceController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderProductController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,8 +31,8 @@ Route::group([
     'prefix' => 'auth'
 ], function ($router) {
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
     Route::group(['middleware' => 'auth:api'], function () {
-        Route::post('/register', [AuthController::class, 'register']);
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::get('/user-profile', [AuthController::class, 'userProfile']);
@@ -42,14 +43,14 @@ Route::group([
 
 Route::group(['middleware' => ['auth:api', 'admin'], 'prefix' => 'admin'], function () {
     Route::apiResource('/products', ProductServiceController::class);
-    Route::resource('/categories', CategoryServiceController::class);
-    Route::resource('/orders', OrderServiceController::class);
-    Route::resource('/order-product', OrderProductServiceController::class)->only(['index', 'show']);
+    Route::apiResource('/categories', CategoryServiceController::class);
+    Route::apiResource('/orders', OrderServiceController::class);
+    Route::apiResource('/order-product', OrderProductServiceController::class)->only(['index', 'show']);
 });
 Route::group(['middleware' => ['auth:api', 'user']], function () {
-    Route::resource('/products', ProductServiceController::class)->only("show", "index", "store");
-    Route::resource('/categories', CategoryServiceController::class)->only("show", "index");
-    Route::resource('/orders', OrderServiceController::class)->only("store", "index", 'show');
+    Route::apiResource('/products', ProductServiceController::class)->except('destroy');
+    Route::apiResource('/categories', CategoryServiceController::class)->only("show", "index");
+    Route::apiResource('/orders', OrderServiceController::class)->only("store", "index", 'show');
     Route::apiResource('/order-product', OrderProductServiceController::class)->only(['index', 'show']);
 });
 

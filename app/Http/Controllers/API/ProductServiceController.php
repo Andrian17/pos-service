@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
 use Illuminate\Http\Request;
@@ -45,9 +46,13 @@ class ProductServiceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(UpdateProductRequest $request, Product $product)
     {
-        return $this->products->update($id, $request->all());
+        // // var_dump(isset($_POST["name"]));
+        // var_dump($request->all());
+        // var_dump($product->name);
+        // return "OK";
+        return $this->products->update($request, $product);
     }
 
     /**

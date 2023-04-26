@@ -6,6 +6,7 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Resources\ProductCollection;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ProductRepository
@@ -40,26 +41,12 @@ class ProductRepository
     public function create(StoreProductRequest $storeProductRequest)
     {
         try {
-            $product = [
-                "category_id" => $storeProductRequest->input("category_id"),
-                "SKU" => $storeProductRequest->input("SKU"),
-                "name" => $storeProductRequest->input("name"),
-                "stock" => $storeProductRequest->input("stock"),
-                "price" => $storeProductRequest->input("price"),
-            ];
-
             $validator = Validator::make($storeProductRequest->all(), [
                 "category_id" => 'required',
-                "SKU" => 'required|unique:products',
                 "name" => 'required',
                 "stock" => 'required|numeric',
                 "price" => 'required|numeric',
             ]);
-
-            $product_image = $storeProductRequest->file('image');
-            $fileName = 'product-' . uniqid() . '.' . $product_image->clientExtension();
-            $product_image->storeAs('public/products', $fileName);
-            $product["image"] = $fileName;
 
             if ($validator->fails()) {
                 return response()->json([
@@ -68,7 +55,33 @@ class ProductRepository
                 ], 400);
             }
 
+            $product = [
+                "category_id" => $storeProductRequest->input("category_id"),
+                "SKU" => "SKU-" . uniqid(),
+                "name" => $storeProductRequest->input("name"),
+                "stock" => $storeProductRequest->input("stock"),
+                "price" => $storeProductRequest->input("price"),
+            ];
+
+            if ($storeProductRequest->hasAny('image')) {
+                $product_image = $storeProductRequest->input('image');
+
+                // Image
+                $folderPath = "public/products/";
+                $formatName = 'productAnd-' . uniqid();
+                $imgParts = explode(';base64', $product_image);
+                $imgBase64 = base64_decode($imgParts[1]);
+                $extension = explode('/', $imgParts[0])[1];
+                $fileName = $formatName . '.' . $extension;
+                $file = $folderPath . $fileName;
+
+                $product["image"] = $fileName;
+
+                Storage::put($file, $imgBase64);
+            }
+
             $product = Product::create($product);
+
             return response()->json([
                 "message" => "Product has been created",
                 "data" => $product
@@ -81,12 +94,11 @@ class ProductRepository
         }
     }
 
-    public function update($id, $data)
+    public function update(Request $updateProductRequest, Product $product)
     {
         try {
-            $validator = Validator::make($data, [
+            $validator = Validator::make($updateProductRequest->all(), [
                 "category_id" => 'required',
-                "SKU" => 'required|unique:products',
                 "name" => 'required',
                 "stock" => 'required|numeric',
                 "price" => 'required|numeric',
@@ -98,7 +110,37 @@ class ProductRepository
                     "data" => $validator->errors()
                 ], 400);
             }
-            $product =  Product::find($id)->update($data);
+
+            $productUpdate = [
+                "category_id" => $updateProductRequest->input("category_id"),
+                "SKU" => "SKU-" . uniqid(),
+                "name" => $updateProductRequest->input("name"),
+                "stock" => $updateProductRequest->input("stock"),
+                "price" => $updateProductRequest->input("price"),
+            ];
+
+            if ($updateProductRequest->hasAny('image')) {
+                $product_image = $updateProductRequest->input('image');
+
+                // Image
+                $folderPath = "public/products/";
+                $formatName = 'productAnd-' . uniqid();
+                $imgParts = explode(';base64', $product_image);
+                $imgBase64 = base64_decode($imgParts[1]);
+                $extension = explode('/', $imgParts[0])[1];
+                $fileName = $formatName . '.' . $extension;
+                $file = $folderPath . $fileName;
+
+                $productUpdate["image"] = $fileName;
+
+                Storage::put($file, $imgBase64);
+            }
+
+            if ($product->image) {
+                Storage::delete('public/products/' . $product->image);
+            }
+
+            $product->update($productUpdate);
 
             return response()->json([
                 "message" => "Product has been updated",

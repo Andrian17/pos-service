@@ -22,7 +22,7 @@ class ProductResource extends JsonResource
             "name" => $this->name,
             "stock" => $this->stock,
             "price" => $this->price,
-            "image" => $request->getSchemeAndHttpHost() . $pathImage . $this->image,
+            "image" => $this->image ? $request->getSchemeAndHttpHost() . $pathImage . $this->image : null,
             "category" => $category,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at
